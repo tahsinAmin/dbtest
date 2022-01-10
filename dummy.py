@@ -1,5 +1,7 @@
 import psycopg2
 
+# change password when in office
+
 # https://www.youtube.com/watch?v=M2NzvnfS-hI
 
 # connect tom the db
@@ -7,14 +9,24 @@ conn = None
 cur = None
 try:
     print("start")
-    conn = psycopg2.connect(
-        host = 'localhost',
-        database = 'test',
-        user = 'postgres',
-        password = 'password',
-        port = 5432)
 
-    #cursor
+# for office
+    # conn = psycopg2.connect(
+    #     host = 'localhost',
+    #     database = 'test',
+    #     user = 'postgres',
+    #     password = 'password',
+    #     port = 5432)
+
+# for home
+    conn = psycopg2.connect(
+        host='localhost',
+        database='db',
+        user='postgres',
+        password='root',
+        port=5432)
+
+    # cursor
     cur = conn.cursor()
 
     # execute the code
@@ -25,6 +37,10 @@ try:
                         dept_id VARCHAR(30))"""
     cur.execute(create_script)
 
+    insert_script = 'INSERT INTO employee (id, name, salary, dept_id) VALUES (%s, %s, %s, %s)'
+    insert_values = (1, 'James', 1200, 'D1')
+    cur.execute(insert_script, insert_values)
+
     # drop_script = """DROP TABLE employee"""
     # cur.execute(drop_script)
 
@@ -34,12 +50,12 @@ try:
 except Exception as error:
     print(error)
 finally:
-    # finally will execute with or wiothout any error bcz if and error occurs, the try block stops.    
-    
-    if cur is not None:   
+    # finally will execute with or wiothout any error bcz if and error occurs, the try block stops.
+
+    if cur is not None:
         # close the cursor
         cur.close()
 
-    if conn is not None: 
+    if conn is not None:
         # close the connection
         conn.close()
